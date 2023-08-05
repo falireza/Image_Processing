@@ -1,0 +1,42 @@
+import cv2
+import os
+import numpy as np
+
+
+# Specify the source and destination directories
+src_dir = r"C:\Users\alrfa\OneDrive\Desktop\subdataset"
+dest_dir = r"C:\Users\alrfa\OneDrive\Desktop\testing"
+
+# Ensure the destination directory exists
+os.makedirs(dest_dir, exist_ok=True)
+
+# Iterate over each file in the source directory
+for filename in os.listdir(src_dir):
+    # Construct the full file path
+    filepath = os.path.join(src_dir, filename)
+
+    # Load the image
+    img = cv2.imread(filepath)
+
+    # Convert the image to grayscale
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    # Apply the Laplacian operator
+    lap = cv2.Laplacian(gray, cv2.CV_64F, ksize=3)
+
+    # Convert the Laplacian output back to an 8-bit image
+    lap = cv2.convertScaleAbs(lap)
+
+    # Convert the Laplacian image back to 3-channel image
+    lap = cv2.cvtColor(lap, cv2.COLOR_GRAY2BGR)
+
+    # Add the Laplacian output to the original image to sharpen it
+    sharpened = cv2.addWeighted(img, 1.5, lap, -0.5, 0)
+
+    # Construct the destination file path
+    dest_filepath = os.path.join(dest_dir, filename)
+
+    # Save the sharpened image
+    cv2.imwrite(dest_filepath, sharpened)
+
+
